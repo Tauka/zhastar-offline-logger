@@ -14,12 +14,14 @@ Each log file has *function name*, *file name* and *line* from which log has bee
 * **Windows**: `%USERPROFILE%\<app name>\logs`
 
 ### API
-* #### `logger.setSettings({ appName: string, version: string, stackTraceDepth: string })`
+* #### `logger.setSettings({ appName: string, version: string, stackTraceDepth: number })`
     `stackTraceDepth`: allows you to configure which file in stack trace tree will be displayed
     > Obligatory to call it before anything
     ```
     logger.setSettings({
-        appName: "MyCoolApp"
+        appName: "MyCoolApp",
+        version: "1.0.12",
+        stackTraceDepth: 3
     });
 
     // now logging directory for MacOS will be "~/MyCoolApp/logs"
