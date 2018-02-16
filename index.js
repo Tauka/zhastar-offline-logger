@@ -8,12 +8,12 @@ const path = require('path');
  * Configured using setters and getters
  */
 function createSettings() {
-    appName = null;
-    version = null;
-    os = null;
-    arch = null;
-    release = null;
-    stackTraceDepth = null;
+    let appName = null;
+    let version = null;
+    let os = null;
+    let arch = null;
+    let release = null;
+    let stackTraceDepth = null;
 
     return {
         setAppName: function(appName) {
@@ -137,7 +137,7 @@ function initialLog() {
      /   (_/\| )   ( || )   ( |/\____) |   | |   | )   ( || ) \ \__
     (_______/|/     \||/     \|\_______)   )_(   |/     \||/   \__/
 
-        
+
      ##### Application name: ${settings.getAppName()}
      ##### Version: ${settings.getVersion()}
      ##### OS: ${settings.getOS()}

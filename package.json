@@ -1,6 +1,6 @@
 {
   "name": "@zhastar/zhastar-offline-logger",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "This packages helps to log actions in offline zhastar projects",
   "main": "index.js",
   "scripts": {
