@@ -14,8 +14,8 @@ Each log file has *function name*, *file name* and *line* from which log has bee
 * **Windows**: `%USERPROFILE%\<app name>\logs`
 
 ### API
-* #### `logger.setSettings({ appName: string })`
-    Allows you to specify folder name in which logs will be stored
+* #### `logger.setSettings({ appName: string, version: string, stackTraceDepth: string })`
+    `stackTraceDepth`: allows you to configure which file in stack trace tree will be displayed
     > Obligatory to call it before anything
     ```
     logger.setSettings({
