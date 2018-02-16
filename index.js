@@ -163,17 +163,18 @@ exports.initialize = function () {
 		if (err) { 
 			fs.mkdir(appDir, () => {
 				fs.mkdir(logDir, () => {
-                    initialLog();
+                    
                 });
 			});
 		} else {
 			fs.access(logDir, (err) => {
 				if (err)  {
                     fs.mkdir(logDir, () => {
-                        initialLog();
                     });
                 }
 			})
 		}
-	});
+    });
+    
+    initialLog();
 }
