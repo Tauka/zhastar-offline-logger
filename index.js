@@ -9,14 +9,54 @@ const path = require('path');
  */
 function createSettings() {
     appName = null;
+    version = null;
+    os = null;
+    arch = null;
+    release = null;
+    stackTraceDepth = null;
 
     return {
         setAppName: function(appName) {
             this.appName = appName
             return this.appName;
         },
-        getAppName: function(appName) {
+        getAppName: function() {
             return this.appName;
+        },
+        setVersion: function(version) {
+            this.version = version;
+            return this.version;
+        },
+        getVersion: function() {
+            return this.version;
+        },
+        setOS: function(os) {
+            this.os = os;
+            return this.os;
+        },
+        getOS: function() {
+            return this.os;
+        },
+        setArch: function(arch) {
+            this.arch = arch;
+            return this.arch;
+        },
+        getArch: function() {
+            return this.arch;
+        },
+        setRelease: function(release) {
+            this.release = release;
+            return this.release;
+        },
+        getRelease: function() {
+            return this.release;
+        },
+        setStackTraceDepth: function(stackTraceDepth) {
+            this.stackTraceDepth = stackTraceDepth;
+            return this.stackTraceDepth;
+        },
+        getStackTraceDepth: function() {
+            return this.stackTraceDepth;
         }
     }
 }
@@ -59,7 +99,7 @@ exports.log = function (message, type) {
     message = '\n' + message;
 
     // handle logging calling context
-    let logLineDetails = ((new Error().stack).split("at ")[2]).trim();
+    let logLineDetails = ((new Error().stack).split("at ")[settings.getStackTraceDepth()]).trim();
     // get rid of full path, and leave only `function name (filename:line:column)`
     logLineDetails = logLineDetails.replace(/\/.+\//, "");
     message = '### ' + logLineDetails + ' ###' + message + '\n';
@@ -74,9 +114,42 @@ exports.log = function (message, type) {
  * @param {string} appName 
  */
 exports.setSettings = function ({
-    appName
+    appName,
+    version,
+    stackTraceDepth
 }) {
     settings.setAppName(appName);
+    settings.setVersion(version);
+    settings.setOS(os.platform());
+    settings.setArch(os.arch());
+    settings.setRelease(os.release());
+    settings.setStackTraceDepth(stackTraceDepth);
+}
+
+function initialLog() {
+    const initialLogMessage = 
+    ` _______           _______  _______ _________ _______  _______ 
+    / ___   )|\     /|(  ___  )(  ____ \\__   __/(  ___  )(  ____ )
+    \/   )  || )   ( || (   ) || (    \/   ) (   | (   ) || (    )|
+        /   )| (___) || (___) || (_____    | |   | (___) || (____)|
+       /   / |  ___  ||  ___  |(_____  )   | |   |  ___  ||     __)
+      /   /  | (   ) || (   ) |      ) |   | |   | (   ) || (\ (   
+     /   (_/\| )   ( || )   ( |/\____) |   | |   | )   ( || ) \ \__
+    (_______/|/     \||/     \|\_______)   )_(   |/     \||/   \__/
+
+        
+     ##### Application name: ${settings.getAppName()}
+     ##### Version: ${settings.getVersion()}
+     ##### OS: ${settings.getOS()}
+     ##### Arch: ${settings.getArch()}
+     ##### Release: ${settings.getRelease()}
+    `;
+
+    const logDir = getLogDir(settings.getAppName());
+    const logPath = path.join(logDir, "_readme.log");
+
+    fs.writeFile(logPath, initialLogMessage, 'utf-8', (err) => {
+    });
 }
 
 /**
@@ -90,13 +163,14 @@ exports.initialize = function () {
 		if (err) { 
 			fs.mkdir(appDir, () => {
 				fs.mkdir(logDir, () => {
-
+                    initialLog();
                 });
 			});
 		} else {
 			fs.access(logDir, (err) => {
 				if (err)  {
                     fs.mkdir(logDir, () => {
+                        initialLog();
                     });
                 }
 			})
