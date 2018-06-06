@@ -14,6 +14,7 @@ function createSettings() {
     let arch = null;
     let release = null;
     let stackTraceDepth = null;
+    let contextPrint = false;
 
     return {
         setAppName: function(appName) {
@@ -57,6 +58,12 @@ function createSettings() {
         },
         getStackTraceDepth: function() {
             return this.stackTraceDepth;
+        },
+        setContextPrint: function(contextPrint) {
+            return this.contextPrint = contextPrint;
+        },
+        getContextPrint: function() {
+            return this.contextPrint;
         }
     }
 }
@@ -98,11 +105,13 @@ exports.log = function (message, type) {
     // append new line at the beginning
     message = '\n' + message;
 
-    // handle logging calling context
-    let logLineDetails = ((new Error().stack).split("at ")[settings.getStackTraceDepth()]).trim();
-    // get rid of full path, and leave only `function name (filename:line:column)`
-    logLineDetails = logLineDetails.replace(/\/.+\//, "");
-    message = '### ' + logLineDetails + ' ###' + message + '\n';
+    if (settings.getContextPrint()) {
+        // handle logging calling context
+        let logLineDetails = ((new Error().stack).split("at ")[settings.getStackTraceDepth()]).trim();
+        // get rid of full path, and leave only `function name (filename:line:column)`
+        logLineDetails = logLineDetails.replace(/\/.+\//, "");
+        message = '### ' + logLineDetails + ' ###' + message + '\n';
+    }
 
     // appends a message to log file, creates new if none exists
     fs.appendFile(logPath, message, 'utf-8', (err) => {
@@ -116,7 +125,8 @@ exports.log = function (message, type) {
 exports.setSettings = function ({
     appName,
     version,
-    stackTraceDepth
+    stackTraceDepth,
+    contextPrint
 }) {
     settings.setAppName(appName);
     settings.setVersion(version);
@@ -124,19 +134,20 @@ exports.setSettings = function ({
     settings.setArch(os.arch());
     settings.setRelease(os.release());
     settings.setStackTraceDepth(stackTraceDepth);
+    settings.setContextPrint(contextPrint);
 }
 
 function initialLog() {
     const initialLogMessage = 
     `
      _______           _______  _______ _________ _______  _______ 
-    / ___   )|\     /|(  ___  )(  ____ \\__   __/(  ___  )(  ____ )
-    \/   )  || )   ( || (   ) || (    \/   ) (   | (   ) || (    )|
+    / ___   )|\\     /|(  ___  )(  ____ \\\\__   __/(  ___  )(  ____ )
+    \\/   )  || )   ( || (   ) || (    \\/   ) (   | (   ) || (    )|
         /   )| (___) || (___) || (_____    | |   | (___) || (____)|
        /   / |  ___  ||  ___  |(_____  )   | |   |  ___  ||     __)
-      /   /  | (   ) || (   ) |      ) |   | |   | (   ) || (\ (   
-     /   (_/\| )   ( || )   ( |/\____) |   | |   | )   ( || ) \ \__
-    (_______/|/     \||/     \|\_______)   )_(   |/     \||/   \__/
+      /   /  | (   ) || (   ) |      ) |   | |   | (   ) || (\\ (   
+     /   (_/\\| )   ( || )   ( |/\\____) |   | |   | )   ( || ) \\ \\__
+    (_______/|/     \\||/     \\|\\_______)   )_(   |/     \\||/   \\__/
 
 
      ##### Application name: ${settings.getAppName()}
